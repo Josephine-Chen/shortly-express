@@ -27,7 +27,7 @@ app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
-  cookie: {secure: true},
+//  cookie: {secure: true},
 }));
 //End middleware
 
@@ -88,7 +88,7 @@ app.post('/signup', function(req, res) {
   new User({username: username}).fetch().then(function(found) {
     if (found) {
       console.log('username already exists');
-      res.redirect('/login');
+      res.redirect('/');
     } else {
       console.log('signed up successfully');
       //Encrypt password
@@ -101,14 +101,12 @@ app.post('/signup', function(req, res) {
           Users.create({
             username: username,
             password: hash,
-            sessionId: req.sessionId,
           })
           .then(function() {
-            res.status(200).send();
+            util.createSession(req, res, username);
           });
         }
       });
-      res.redirect('/');
     }
   });
 });
@@ -124,7 +122,6 @@ function(req, res) {
 app.post('/links',
 function(req, res) {
   var uri = req.body.url;
-  console.log('debug.........util.isValidUrl', uri);
 
   if (!util.isValidUrl(uri)) {
     console.log('Not a valid url: ', uri);
@@ -147,6 +144,7 @@ function(req, res) {
           baseUrl: req.headers.origin
         })
         .then(function(newLink) {
+          console.log('link created!');
           res.status(200).send(newLink);
         });
       });

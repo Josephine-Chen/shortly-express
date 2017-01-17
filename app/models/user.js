@@ -18,12 +18,6 @@ var User = db.Model.extend({
         callback(res);
       }
     });
-    // if (attemptPassword === this.get('password')) {
-    //   callback(true);
-    // } else {
-    //   callback(false);
-    // }
-
   }
 });
 
