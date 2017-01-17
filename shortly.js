@@ -50,14 +50,13 @@ function(req, res) {
 
 app.post('/login', function(req, res) {
   var username = req.body.username;
-  var password = req.body.password;
 
   new User({username: username}).fetch().then(function(user) {
     if (!user) {
       console.log('username not found');
       res.redirect('/login');
     } else {
-      user.comparePassword(password, function(match) {
+      user.comparePassword(req.body.password, function(match) {
         if (match) {
           console.log('you are signed in');
           util.createSession(req, res, user);
@@ -85,7 +84,6 @@ function(req, res) {
 
 app.post('/signup', function(req, res) {
   var username = req.body.username;
-  var password = req.body.password;
   console.log('tried to signup');
   new User({username: username}).fetch().then(function(found) {
     if (found) {
@@ -93,15 +91,24 @@ app.post('/signup', function(req, res) {
       res.redirect('/login');
     } else {
       console.log('signed up successfully');
-      Users.create({
-        username: username,
-        password: password,
-        sessionId: req.sessionId,
-      })
-      .then(function(user) {
-        res.status(200).send(user);
+      //Encrypt password
+      bcrypt.hash(req.body.password, null, null, function(err, hash) {
+        if (err) {
+          console.log('hash error', err);
+          return;
+        } else {
+          //Store to database
+          Users.create({
+            username: username,
+            password: hash,
+            sessionId: req.sessionId,
+          })
+          .then(function() {
+            res.status(200).send();
+          });
+        }
       });
-      //res.redirect('/');
+      res.redirect('/');
     }
   });
 });
