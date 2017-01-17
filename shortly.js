@@ -32,12 +32,12 @@ app.use(session({
 //End middleware
 
 //Index
-app.get('/',
+app.get('/', util.isLoggedIn,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/create',
+app.get('/create', util.isLoggedIn,
 function(req, res) {
   res.render('index');
 });
@@ -114,7 +114,7 @@ app.post('/signup', function(req, res) {
 });
 
 //Links
-app.get('/links',
+app.get('/links', util.isLoggedIn,
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.status(200).send(links.models);
