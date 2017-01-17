@@ -98,20 +98,10 @@ app.post('/signup', function(req, res) {
         password: password,
         sessionId: req.sessionId,
       })
-      .then(function(user){
+      .then(function(user) {
         res.status(200).send(user);
       });
       //res.redirect('/');
-
-      // var user = new User({
-      //   username: username,
-      //   password: password,
-      //   sessionId: req.sessionID,
-      // });
-      // user.save().then(function(user) {
-      //   Users.add(user);
-      //   res.status(200).send(user);
-      // });
     }
   });
 });
